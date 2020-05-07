@@ -4,6 +4,8 @@
     https://api.github.com/users/<your name>
 */
 
+axios.get(`https://api.github.com/users/meep-morp`);
+
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -49,6 +51,52 @@ const followersArray = [];
       </div>
     </div>
 */
+
+const makeGitHubCard = (attrs) => {
+const {avatar_url, name, login, location, html_url, followers, following, bio} = attrs;
+
+  const card = document.createElement("div");
+  const image = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const realName = document.createElement("h3");
+  const username = document.createElement("p");
+  const locationData = document.createElement("p");
+  const profile = document.createElement("p");
+  const profileLink = document.createElement("a");
+  const followersData = document.createElement("p");
+  const followingData = document.createElement("p");
+  const bioData = document.createElement("p");
+
+  card.appendChild(image);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(realName);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(locationData);
+  cardInfo.appendChild(profile);
+  profile.appendChild(profileLink);
+  cardInfo.appendChild(followersData);
+  cardInfo.appendChild(followingData);
+  cardInfo.appendChild(bioData);
+
+  image.src = avatar_url;
+  realName.textContent = name;
+  username.textContent = login;
+  locationData.textContent = location;
+  profile.textContent = "Profile:";
+  profileLink.href = html_url;
+  profileLink.textContent = html_url;
+  followersData.textContent = followers;
+  followingData.textContent = following;
+  bioData.textContent = bio;
+
+  card.classList.add("card");
+  cardInfo.classList.add("card-info");
+  realName.classList.add("name");
+  username.classList.add("username");
+
+  return card;
+}
+
 
 /*
   List of LS Instructors Github username's:
