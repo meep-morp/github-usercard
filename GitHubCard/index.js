@@ -4,7 +4,7 @@
     https://api.github.com/users/<your name>
 */
 
-axios.get(`https://api.github.com/users/meep-morp`);
+
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -19,6 +19,25 @@ axios.get(`https://api.github.com/users/meep-morp`);
     and append the returned markup to the DOM as a child of .cards
 */
 
+function getGithub(username) {
+  axios.get(`https:api.github.com/users/${username}`)
+    .then(response => {
+      const data = response.data
+        const user = makeGitHubCard(data);
+        document.querySelector(".cards").appendChild(user)
+        console.log("GitHub did a good job");
+    })
+    .catch(error => {
+      console.log(`github has failed us all`);
+    })
+
+    .finally(() => {
+      console.log('done');
+    })
+}
+
+
+
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
     follow this link in your browser https://api.github.com/users/<Your github name>/followers,
@@ -30,7 +49,24 @@ axios.get(`https://api.github.com/users/meep-morp`);
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ["dannygipson95", "JDMTias", "songamugenzi", "iatechristmas", "Vippsi", "Jeffreyo3", "garybot",];
+
+followersArray.forEach((user) => {
+    axios.get(`https:api.github.com/users/${user}`)
+      .then(response => {
+        const data = response.data
+          const user = makeGitHubCard(data);
+          document.querySelector(".cards").appendChild(user)
+          console.log("GitHub did a good job");
+      })
+      .catch(error => {
+        console.log(`github has failed us all`);
+      })
+  
+      .finally(() => {
+        console.log('done');
+      })
+})
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -52,8 +88,8 @@ const followersArray = [];
     </div>
 */
 
-const makeGitHubCard = (attrs) => {
-const {avatar_url, name, login, location, html_url, followers, following, bio} = attrs;
+const makeGitHubCard = (attrsObj) => {
+// const {avatar_url, name, login, location, html_url, followers, following, bio} = attrs;
 
   const card = document.createElement("div");
   const image = document.createElement("img");
@@ -78,16 +114,20 @@ const {avatar_url, name, login, location, html_url, followers, following, bio} =
   cardInfo.appendChild(followingData);
   cardInfo.appendChild(bioData);
 
-  image.src = avatar_url;
-  realName.textContent = name;
-  username.textContent = login;
-  locationData.textContent = location;
+  image.src = attrsObj.avatar_url;
+  realName.textContent = attrsObj.name;
+  username.textContent = attrsObj.login;
+  locationData.textContent = attrsObj.location;
   profile.textContent = "Profile:";
-  profileLink.href = html_url;
-  profileLink.textContent = html_url;
-  followersData.textContent = followers;
-  followingData.textContent = following;
-  bioData.textContent = bio;
+  profileLink.href = attrsObj.html_url;
+  profileLink.textContent = attrsObj.html_url;
+  followersData.textContent = `Followers: ${attrsObj.followers}`;
+  followingData.textContent = `Following: ${attrsObj.following}`;
+  if(attrsObj.bio === null) {
+    cardInfo.removeChild(bioData);
+  } else {
+      bioData.textContent = `Bio: ${attrsObj.bio}`;
+    }
 
   card.classList.add("card");
   cardInfo.classList.add("card-info");
@@ -97,6 +137,7 @@ const {avatar_url, name, login, location, html_url, followers, following, bio} =
   return card;
 }
 
+getGithub("meep-morp");
 
 /*
   List of LS Instructors Github username's:
