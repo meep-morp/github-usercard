@@ -28,7 +28,7 @@ function getGithub(username) {
         console.log("GitHub did a good job");
     })
     .catch(error => {
-      console.log(`github has failed us all`);
+      console.log(error);
     })
 
     .finally(() => {
@@ -49,24 +49,27 @@ function getGithub(username) {
     user, and adding that card to the DOM.
 */
 
-const followersArray = ["dannygipson95", "JDMTias", "songamugenzi", "iatechristmas", "Vippsi", "Jeffreyo3", "garybot",];
+// const followersArray = [];
 
-followersArray.forEach((user) => {
-    axios.get(`https:api.github.com/users/${user}`)
-      .then(response => {
-        const data = response.data
-          const user = makeGitHubCard(data);
-          document.querySelector(".cards").appendChild(user)
-          console.log("GitHub did a good job");
-      })
-      .catch(error => {
-        console.log(`github has failed us all`);
-      })
+// axios.get(`https://api.github.com/users/meep-morp/followers`)
+// .then(response => {
   
-      .finally(() => {
-        console.log('done');
-      })
-})
+//   response.data.forEach((data) => {
+//     followersArray.push(data.login);
+//     console.log("Pushed");
+//   })
+  
+//   followersArray.forEach((user) => {
+//     getGithub(user);
+
+// });
+
+// })
+// .catch(error => {
+//   console.log(error);
+// })
+
+// console.log(followersArray);
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -89,7 +92,6 @@ followersArray.forEach((user) => {
 */
 
 const makeGitHubCard = (attrsObj) => {
-// const {avatar_url, name, login, location, html_url, followers, following, bio} = attrs;
 
   const card = document.createElement("div");
   const image = document.createElement("img");
@@ -102,27 +104,57 @@ const makeGitHubCard = (attrsObj) => {
   const followersData = document.createElement("p");
   const followingData = document.createElement("p");
   const bioData = document.createElement("p");
+  const closeContainer = document.createElement("div");
+  const following = document.createElement("ul");
+  const expandButton = document.createElement("span");
 
   card.appendChild(image);
   card.appendChild(cardInfo);
+  card.appendChild(expandButton);
   cardInfo.appendChild(realName);
   cardInfo.appendChild(username);
   cardInfo.appendChild(locationData);
   cardInfo.appendChild(profile);
-  profile.appendChild(profileLink);
   cardInfo.appendChild(followersData);
   cardInfo.appendChild(followingData);
   cardInfo.appendChild(bioData);
+  cardInfo.appendChild(expandButton);
+  cardInfo.appendChild(closeContainer);
+  closeContainer.appendChild(following);
+
+  followingList = [];
+
+  axios.get(`https://api.github.com/users/${attrsObj.login}/following`)
+  .then(response => {
+
+    response.data.forEach((data) => {
+      followingList.push(data.login);
+      console.log("Pushed");
+    })     
+
+    followingList.forEach((follower) => {
+      const followingUser = document.createElement("li");
+      following.appendChild(followingUser);
+      followingUser.textContent = follower;
+    })
+  })
+  .catch(error => {
+    console.log(error);
+  })
 
   image.src = attrsObj.avatar_url;
   realName.textContent = attrsObj.name;
   username.textContent = attrsObj.login;
   locationData.textContent = attrsObj.location;
-  profile.textContent = "Profile:";
+  profile.textContent = `Profile: `;
+  profile.appendChild(profileLink);
   profileLink.href = attrsObj.html_url;
   profileLink.textContent = attrsObj.html_url;
   followersData.textContent = `Followers: ${attrsObj.followers}`;
   followingData.textContent = `Following: ${attrsObj.following}`;
+  expandButton.textContent = ("\u25FF");
+  following.textContent = "Following: ";
+
   if(attrsObj.bio === null) {
     cardInfo.removeChild(bioData);
   } else {
@@ -133,11 +165,34 @@ const makeGitHubCard = (attrsObj) => {
   cardInfo.classList.add("card-info");
   realName.classList.add("name");
   username.classList.add("username");
+  expandButton.classList.add("expandButton");
+  closeContainer.classList.add("closeContainer", "hidden");
+
+    expandButton.addEventListener("click", (event) => {
+      closeContainer.classList.toggle("hidden");
+      card.classList.toggle("card-open");
+      expandButton.classList.toggle("closeButton");
+    })
 
   return card;
 }
 
 getGithub("meep-morp");
+
+// const test = 
+// {
+//   "avatar_url": "https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500}", 
+//   "name": "hi", 
+//   "login": "nothin", 
+//   "location": "usa", 
+//   "followers": "100", 
+//   "following": "0",
+//   "html_url": "#",
+// }
+
+// makeGitHubCard(test);
+
+
 
 /*
   List of LS Instructors Github username's:
